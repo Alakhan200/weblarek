@@ -1,4 +1,4 @@
-import { IApi, IProductListResponse, IOrderRequest, IOrderResponse } from '../types';
+import { IApi, IProductListResponse, IOrderRequest, IOrderResponse } from '../../types';
 
 export class WebLarekApi {
   protected api: IApi;
