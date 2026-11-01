@@ -228,6 +228,7 @@ events.on('form:submit', () => {
       total: basketModel.getTotalPrice(),
       items: basketModel.getItems().map(item => item.id)
     }).then(() => {
+      alert('Заказ оформлен!');
       modal.close();
       
       basketModel.clear();
