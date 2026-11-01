@@ -2,6 +2,7 @@ import './scss/styles.scss';
 import { EventEmitter } from './components/base/Events';
 import { Api } from './components/base/Api';
 import { WebLarekApi } from './components/Models/WebLarekApi';
+import { TPayment } from './types';
 
 // Импорты моделей
 import { ProductsData } from './components/Models/ProductsData';
@@ -64,6 +65,7 @@ events.on('products:changed', () => {
 });
 
 events.on('card:select', (data: { id: string }) => {
+  
   const product = productsModel.getItem(data.id);
   if (product) {
     productsModel.setPreview(product);
@@ -165,7 +167,7 @@ events.on('order:open', () => {
 });
 
 events.on('order.payment:change', (data: { field: string, value: string }) => {
-  buyerModel.setData({ payment: data.value as any });
+  buyerModel.setData({ payment: data.value as TPayment });
 });
 
 events.on('order.address:change', (data: { field: string, value: string }) => {
@@ -226,9 +228,8 @@ events.on('form:submit', () => {
       total: basketModel.getTotalPrice(),
       items: basketModel.getItems().map(item => item.id)
     }).then(() => {
-      alert('Заказ оформлен!'); 
       modal.close();
-
+      
       basketModel.clear();
       buyerModel.clear();
     });
