@@ -1,21 +1,21 @@
-import { EventEmitter } from '../base/Events';
-import { IBuyer, TPayment } from '../../types';
+import { IEvents } from "../base/Events";
+import { IBuyer, TPayment } from "../../types";
 
 export class BuyerData {
-  protected payment: TPayment = '';
-  protected email: string = '';
-  protected phone: string = '';
-  protected address: string = '';
+  protected payment: TPayment = "";
+  protected email: string = "";
+  protected phone: string = "";
+  protected address: string = "";
 
-  constructor(protected events: EventEmitter) {}
+  constructor(protected events: IEvents) {}
 
   setData(data: Partial<IBuyer>): void {
     if (data.payment !== undefined) this.payment = data.payment;
     if (data.email !== undefined) this.email = data.email;
     if (data.phone !== undefined) this.phone = data.phone;
     if (data.address !== undefined) this.address = data.address;
-    
-    this.events.emit('buyer:changed', data);
+
+    this.events.emit("buyer:changed");
   }
 
   getData(): IBuyer {
@@ -28,19 +28,19 @@ export class BuyerData {
   }
 
   clear(): void {
-    this.payment = '';
-    this.email = '';
-    this.phone = '';
-    this.address = '';
-    this.events.emit('buyer:changed', this.getData());
+    this.payment = "";
+    this.email = "";
+    this.phone = "";
+    this.address = "";
+    this.events.emit("buyer:changed");
   }
 
   validate(): Partial<Record<keyof IBuyer, string>> {
     const errors: Partial<Record<keyof IBuyer, string>> = {};
-    if (!this.payment) errors.payment = 'Не выбран способ оплаты';
-    if (!this.email) errors.email = 'Укажите email';
-    if (!this.phone) errors.phone = 'Укажите телефон';
-    if (!this.address) errors.address = 'Укажите адрес';
+    if (!this.payment) errors.payment = "Не выбран способ оплаты";
+    if (!this.email) errors.email = "Укажите email";
+    if (!this.phone) errors.phone = "Укажите телефон";
+    if (!this.address) errors.address = "Укажите адрес";
     return errors;
   }
 }

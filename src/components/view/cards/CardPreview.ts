@@ -1,46 +1,46 @@
-import { Card } from './Card';
-import { EventEmitter } from '../../base/Events';
-import { IProduct } from '../../../types';
+import { CardWithImage, ICardWithImage } from "./CardWithImage";
+import { IEvents } from "../../base/Events";
+import { ensureElement } from "../../../utils/utils";
 
-export interface ICardPreview extends IProduct {
-  isInBasket: boolean;
+interface ICardPreview extends ICardWithImage {
+  description: string;
+  buttonText: string;
+  buttonDisabled: boolean;
 }
 
-export class CardPreview extends Card<ICardPreview> {
-  protected id: string = '';
+export class CardPreview extends CardWithImage<ICardPreview> {
   protected descriptionElement: HTMLElement;
   protected buttonElement: HTMLButtonElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+  ) {
     super(container);
-    
-    this.descriptionElement = container.querySelector('.card__text') as HTMLElement;
-    this.buttonElement = container.querySelector('.card__button') as HTMLButtonElement;
 
-    this.buttonElement.addEventListener('click', () => {
-      if (this.buttonElement.textContent === 'Удалить из корзины') {
-        this.events.emit('card:remove', { id: this.id });
-      } else {
-        this.events.emit('card:buy', { id: this.id });
-      }
+    this.descriptionElement = ensureElement<HTMLElement>(
+      ".card__text",
+      container,
+    );
+    this.buttonElement = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      container,
+    );
+
+    this.buttonElement.addEventListener("click", () => {
+      this.events.emit("card:button");
     });
-  }
-
-  set productId(value: string) {
-    this.id = value;
   }
 
   set description(value: string) {
     this.descriptionElement.textContent = value;
   }
 
-  set inBasket(value: boolean) {
-    if (this.priceElement.textContent === 'Бесценно') {
-      this.buttonElement.textContent = 'Недоступно';
-      this.buttonElement.disabled = true;
-    } else {
-      this.buttonElement.disabled = false;
-      this.buttonElement.textContent = value ? 'Удалить из корзины' : 'Купить';
-    }
+  set buttonText(value: string) {
+    this.buttonElement.textContent = value;
+  }
+
+  set buttonDisabled(value: boolean) {
+    this.buttonElement.disabled = value;
   }
 }

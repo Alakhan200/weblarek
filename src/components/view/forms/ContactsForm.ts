@@ -1,24 +1,36 @@
-import { Form } from './Form';
-import { EventEmitter } from '../../base/Events';
+import { Form } from "./Form";
+import { IEvents } from "../../base/Events";
+import { ensureElement } from "../../../utils/utils";
+import { IFormChange, TContactsFormData } from "../../../types";
 
-export class ContactsForm extends Form<{ email: string; phone: string }> {
+export class ContactsForm extends Form<TContactsFormData> {
   protected emailInput: HTMLInputElement;
   protected phoneInput: HTMLInputElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
-    super(container,events);
+  constructor(container: HTMLElement, events: IEvents) {
+    super(container, events, "contacts:submit");
 
-    this.emailInput = container.querySelector('input[name="email"]') as HTMLInputElement;
-    this.phoneInput = container.querySelector('input[name="phone"]') as HTMLInputElement;
+    this.emailInput = ensureElement<HTMLInputElement>(
+      'input[name="email"]',
+      container,
+    );
+    this.phoneInput = ensureElement<HTMLInputElement>(
+      'input[name="phone"]',
+      container,
+    );
 
-    this.emailInput.addEventListener('input', (event) => {
-      const target = event.target as HTMLInputElement;
-      this.events.emit('contacts.email:change', { field: 'email', value: target.value });
+    this.emailInput.addEventListener("input", () => {
+      this.events.emit<IFormChange>("contacts.email:change", {
+        field: "email",
+        value: this.emailInput.value,
+      });
     });
 
-    this.phoneInput.addEventListener('input', (event) => {
-      const target = event.target as HTMLInputElement;
-      this.events.emit('contacts.phone:change', { field: 'phone', value: target.value });
+    this.phoneInput.addEventListener("input", () => {
+      this.events.emit<IFormChange>("contacts.phone:change", {
+        field: "phone",
+        value: this.phoneInput.value,
+      });
     });
   }
 

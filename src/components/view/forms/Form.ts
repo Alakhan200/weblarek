@@ -1,19 +1,32 @@
-import { Component } from '../../base/Component';
-import { EventEmitter } from '../../base/Events';
+import { Component } from "../../base/Component";
+import { IEvents } from "../../base/Events";
+import { ensureElement } from "../../../utils/utils";
 
-export class Form<T> extends Component<T> {
+interface IFormState {
+  valid: boolean;
+  errors: string;
+}
+
+export abstract class Form<T> extends Component<T & IFormState> {
   protected submitButton: HTMLButtonElement;
   protected errorsElement: HTMLElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+    submitEvent: string,
+  ) {
     super(container);
 
-    this.submitButton = container.querySelector('button[type="submit"]') as HTMLButtonElement;
-    this.errorsElement = container.querySelector('.form__errors') as HTMLElement;
+    this.submitButton = ensureElement<HTMLButtonElement>(
+      'button[type="submit"]',
+      container,
+    );
+    this.errorsElement = ensureElement<HTMLElement>(".form__errors", container);
 
-    this.submitButton.addEventListener('click', (event) => {
-      event.preventDefault(); 
-      this.events.emit('form:submit');
+    container.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.events.emit(submitEvent);
     });
   }
 

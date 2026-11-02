@@ -1,25 +1,28 @@
-import { Card } from './Card';
-import { EventEmitter } from '../../base/Events';
-import { IProduct } from '../../../types';
+import { Card, ICard } from "./Card";
+import { ensureElement } from "../../../utils/utils";
+import { IActions } from "../../../types";
 
-export class CardBasket extends Card<IProduct> {
-  protected id: string = '';
+interface ICardBasket extends ICard {
+  index: number;
+}
+
+export class CardBasket extends Card<ICardBasket> {
   protected indexElement: HTMLElement;
   protected deleteButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+  constructor(container: HTMLElement, actions: IActions) {
     super(container);
 
-    this.indexElement = container.querySelector('.basket__item-index') as HTMLElement;
-    this.deleteButton = container.querySelector('.basket__item-delete') as HTMLButtonElement;
+    this.indexElement = ensureElement<HTMLElement>(
+      ".basket__item-index",
+      container,
+    );
+    this.deleteButton = ensureElement<HTMLButtonElement>(
+      ".basket__item-delete",
+      container,
+    );
 
-    this.deleteButton.addEventListener('click', () => {
-      this.events.emit('card:delete', { id: this.id });
-    });
-  }
-
-  set productId(value: string) {
-    this.id = value;
+    this.deleteButton.addEventListener("click", actions.onClick);
   }
 
   set index(value: number) {

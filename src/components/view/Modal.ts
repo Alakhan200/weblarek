@@ -1,5 +1,5 @@
-import { Component } from '../base/Component';
-import { EventEmitter } from '../base/Events';
+import { Component } from "../base/Component";
+import { ensureElement } from "../../utils/utils";
 
 interface IModal {
   content: HTMLElement;
@@ -9,15 +9,21 @@ export class Modal extends Component<IModal> {
   protected closeButton: HTMLButtonElement;
   protected contentContainer: HTMLElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+  constructor(container: HTMLElement) {
     super(container);
-    
-    this.closeButton = container.querySelector('.modal__close') as HTMLButtonElement;
-    this.contentContainer = container.querySelector('.modal__content') as HTMLElement;
 
-    this.closeButton.addEventListener('click', () => this.close());
-    
-    container.addEventListener('click', (event) => {
+    this.closeButton = ensureElement<HTMLButtonElement>(
+      ".modal__close",
+      container,
+    );
+    this.contentContainer = ensureElement<HTMLElement>(
+      ".modal__content",
+      container,
+    );
+
+    this.closeButton.addEventListener("click", () => this.close());
+
+    container.addEventListener("click", (event) => {
       if (event.target === container) {
         this.close();
       }
@@ -28,16 +34,11 @@ export class Modal extends Component<IModal> {
     this.contentContainer.replaceChildren(value);
   }
 
-  open() {
-    this.container.classList.add('modal_active');
+  open(): void {
+    this.container.classList.add("modal_active");
   }
 
-  close() {
-    this.container.classList.remove('modal_active');
-    this.events.emit('modal:close');
-  }
-
-  render(): HTMLElement {
-    return this.container;
+  close(): void {
+    this.container.classList.remove("modal_active");
   }
 }

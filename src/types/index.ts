@@ -1,11 +1,15 @@
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 
 export interface IApi {
-    get<T extends object>(uri: string): Promise<T>;
-    post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(
+    uri: string,
+    data: object,
+    method?: ApiPostMethods,
+  ): Promise<T>;
 }
 
-export type TPayment = 'card' | 'cash' | '';
+export type TPayment = "card" | "cash" | "";
 
 export interface IProduct {
   id: string;
@@ -36,4 +40,19 @@ export interface IOrderRequest extends IBuyer {
 export interface IOrderResponse {
   id: string;
   total: number;
+}
+
+// Событие изменения поля формы
+export interface IFormChange {
+  field: string;
+  value: string;
+}
+
+// Данные форм
+export type TOrderFormData = Pick<IBuyer, "payment" | "address">;
+export type TContactsFormData = Pick<IBuyer, "email" | "phone">;
+
+// Действия, которые передаются в конструктор компонента
+export interface IActions {
+  onClick: () => void;
 }

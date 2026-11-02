@@ -1,19 +1,10 @@
-import { Card } from './Card';
-import { EventEmitter } from '../../base/Events';
-import { IProduct } from '../../../types';
+import { CardWithImage, ICardWithImage } from "./CardWithImage";
+import { IActions } from "../../../types";
 
-export class CardCatalog extends Card<IProduct> {
-  protected id: string = '';
-
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+export class CardCatalog extends CardWithImage<ICardWithImage> {
+  constructor(container: HTMLElement, actions: IActions) {
     super(container);
 
-    this.container.addEventListener('click', () => {
-      this.events.emit('card:select', { id: this.id });
-    });
-  }
-
-  set productId(value: string) {
-    this.id = value;
+    container.addEventListener("click", actions.onClick);
   }
 }

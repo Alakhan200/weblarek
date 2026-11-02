@@ -1,34 +1,45 @@
-import { Component } from '../base/Component';
-import { EventEmitter } from '../base/Events';
+import { Component } from "../base/Component";
+import { IEvents } from "../base/Events";
+import { ensureElement } from "../../utils/utils";
 
-export class Basket extends Component<{ items: HTMLElement[]; total: number }> {
+interface IBasket {
+  items: HTMLElement[];
+  total: number;
+  canOrder: boolean;
+}
+
+export class Basket extends Component<IBasket> {
   protected listElement: HTMLElement;
   protected totalElement: HTMLElement;
   protected orderButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+  ) {
     super(container);
 
-    this.listElement = container.querySelector('.basket__list') as HTMLElement;
-    this.totalElement = container.querySelector('.basket__price') as HTMLElement;
-    this.orderButton = container.querySelector('.basket__button') as HTMLButtonElement;
+    this.listElement = ensureElement<HTMLElement>(".basket__list", container);
+    this.totalElement = ensureElement<HTMLElement>(".basket__price", container);
+    this.orderButton = ensureElement<HTMLButtonElement>(
+      ".basket__button",
+      container,
+    );
 
-    this.orderButton.addEventListener('click', () => {
-      this.events.emit('order:open');
+    this.orderButton.addEventListener("click", () => {
+      this.events.emit("order:open");
     });
   }
 
   set items(items: HTMLElement[]) {
-    if (items.length === 0) {
-      this.listElement.innerHTML = '<p>Корзина пуста</p>';
-      this.orderButton.disabled = true;
-    } else {
-      this.listElement.replaceChildren(...items);
-      this.orderButton.disabled = false;
-    }
+    this.listElement.replaceChildren(...items);
   }
 
   set total(value: number) {
     this.totalElement.textContent = `${value} синапсов`;
+  }
+
+  set canOrder(value: boolean) {
+    this.orderButton.disabled = !value;
   }
 }
